@@ -1,5 +1,5 @@
 # GCD_Minesweeper_SF
-Built with Android Studio
+Created with Android Studio
 
 Assignment 02: building a custom view to implement the game of minesweeper
 
