@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GCD_Minesweeper_SF</string>
+    <string name="action_settings">Settings</string>
+    <string name="reset">Reset Game</string>
+    <string name="mark">Marking Mode</string>
+    <string name="marked">Marked Mines: 0</string>
+    <string name="total">Total Mines: 20</string>
+</resources>
