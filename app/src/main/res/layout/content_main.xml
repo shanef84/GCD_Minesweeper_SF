@@ -15,8 +15,7 @@
     <com.example.forbess.gcd_minesweeper_sf.CustomView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:longClickable="true"
-        android:clickable="true" />
+        />
 
     <Button
         android:layout_width="match_parent"

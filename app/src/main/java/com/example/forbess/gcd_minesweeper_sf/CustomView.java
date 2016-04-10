@@ -6,14 +6,26 @@ package com.example.forbess.gcd_minesweeper_sf;
 // imports
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 public class CustomView extends View{
+    //Constants
+    private final int boardsize = 10;
+    private int cellWidth, cellHeight;
+    private Paint grey, white, red;
+
+    //Grid
+    private int[][] grid;
+    private boolean[][] cells;
+    //Global flag for disabling the touch if mine is hit
+    private boolean touch;
 
     //default constructor
     public CustomView(Context c){
@@ -36,7 +48,6 @@ public class CustomView extends View{
     @Override
     protected void onMeasure(int widthMeasure, int heightMeasure) {
         super.onMeasure(widthMeasure, heightMeasure);
-
         int size =0;
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
@@ -53,12 +64,37 @@ public class CustomView extends View{
 
     // refactored init method as most of this code is shared by all the constructors
     private void init() {
+        //set colors
+        white = new Paint(Paint.ANTI_ALIAS_FLAG);
+        grey = new Paint(Paint.ANTI_ALIAS_FLAG);
+        red = new Paint(Paint.ANTI_ALIAS_FLAG);
+        white.setColor(Color.WHITE);white.setStrokeWidth(5);
+        grey.setColor(Color.GRAY);
+        red.setColor(Color.RED);
+        //set cell sizes
+        cellWidth = (int) getMeasuredWidth() / boardsize;
+        cellHeight = (int) getMeasuredHeight() / boardsize;
+        //grid
+        cells = new boolean[boardsize][boardsize];
+        for (int i=0; i<boardsize; i++){
+            for (int j=0; j<boardsize; j++){
+                cells[i][j]=false;
+            }
+        }
     }
 
     // public method that needs to be overridden to draw the contents of this widget
     public void onDraw(Canvas canvas) {
         // call the superclass method
         super.onDraw(canvas);
+        canvas.drawColor(Color.BLACK);
+        for (int i = 1; i < boardsize; i++) {
+            canvas.drawLine(0, i*(getHeight()/boardsize), getWidth(), i*(getHeight()/boardsize), white);
+            canvas.drawLine(i*(getWidth()/boardsize), 0, i*(getWidth()/boardsize), getHeight(), white);
+        }
+        /*for (int i = 1; i < boardsize; i++) {
+            canvas.drawLine(0, i * cellHeight, getWidth(), i * cellHeight, white);
+        }*/
     }
 
     // public method that needs to be overridden to handle the touches from a user
