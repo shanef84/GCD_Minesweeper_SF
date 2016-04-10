@@ -15,11 +15,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class CustomView extends View{
     //private fields for rendering the view
     private final int boardsize = 10;
     private int cellWidth, cellHeight;
-    private Paint grey, white, red, yellow;
+    private Paint grey, white, red, mineText, textOne, textTwo, TextThree;
+    private float textSize, textWidth;
+    private String mine;
     private boolean touch = false;
     //Grid
     private int[][] board;       //record value in cells 0 = no touch
@@ -74,16 +78,18 @@ public class CustomView extends View{
     private void init() {
         //set colors
         white = new Paint(Paint.ANTI_ALIAS_FLAG);
-        grey = new Paint(Paint.ANTI_ALIAS_FLAG);
-        red = new Paint(Paint.ANTI_ALIAS_FLAG);
-        yellow = new Paint(Paint.ANTI_ALIAS_FLAG);
         white.setColor(Color.WHITE);white.setStrokeWidth(2);
-        grey.setColor(Color.GRAY);
-        red.setColor(Color.RED);
-        yellow.setColor(Color.YELLOW);
-        setSize();
-        board = new int [boardsize][boardsize];
+        grey = new Paint(Paint.ANTI_ALIAS_FLAG);grey.setColor(Color.GRAY);
+        //mine text+size
+        mine = "M";
+        red = new Paint(Paint.ANTI_ALIAS_FLAG);red.setColor(Color.RED);
+        mineText = new Paint(Paint.ANTI_ALIAS_FLAG);mineText.setColor(Color.BLACK);
+        mineText.setTextSize(60);mineText.setTextAlign(Paint.Align.CENTER);
+        textWidth = mineText.measureText(mine); textSize = mineText.getTextSize();
 
+
+        board = new int [boardsize][boardsize];
+        setMines();
     }
 
     // public method that needs to be overridden to draw the contents of this widget
@@ -94,11 +100,24 @@ public class CustomView extends View{
         for (int i = 0; i < boardsize; i++) {
             for (int j = 0; j < boardsize; j++) {
                 if (cells[i][j]) {
-                    //do nothing
                     if (board[i][j]==1) {
-                        //do something
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
+                        //print numbers 1
                     }
-                    else {
+                    else if (board[i][j]==2){
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
+                        //print numbers 2
+                    }
+                    else if (board[i][j]==3){
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
+                        //print numbers 3
+                    }
+                    else if (board[i][j]==5){
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, red);
+                        canvas.drawText(mine, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, mineText);
+                        //game over
+                    }
+                    else { //plain grey
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
                     }
                 }
@@ -108,6 +127,31 @@ public class CustomView extends View{
         for (int i = 1; i < boardsize; i++) {
             canvas.drawLine(0, i*(getHeight()/boardsize), getWidth(), i*(getHeight()/boardsize), white);
             canvas.drawLine(i*(getWidth() / boardsize), 0, i*(getWidth()/boardsize), getHeight(), white);
+        }
+    }
+
+    public void setMines(){
+        Random r = new Random();
+        int mineX, mineY;
+        int i = 0;
+        while (i<20){
+            mineX = r.nextInt(10);
+            mineY = r.nextInt(10);
+            if (board[mineX][mineY]!=5) {
+                board[mineX][mineY] = 5;
+                i++;
+            }
+        }
+
+
+    }
+    public void setNumbers(){
+        for (int i = 0; i < boardsize; i++){
+            for ( int j = 0; j < boardsize; j++){
+                if (board[i][j]==5){
+                    //render numbers
+                }
+            }
         }
     }
 
