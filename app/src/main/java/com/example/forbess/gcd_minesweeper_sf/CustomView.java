@@ -134,6 +134,9 @@ public class CustomView extends View{
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, red);
                         canvas.drawText(mine, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, mineText);
                         //game over
+                        touch = true;
+                        Toast.makeText(getContext(), "GAME OVER!", Toast.LENGTH_SHORT).show();
+
                     }
                     else { //plain grey
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
@@ -246,5 +249,18 @@ public class CustomView extends View{
         }
         return true;
         }
+
+    public void reset(){
+        touch=false;
+        for (int i = 0; i < boardsize; i++) {
+            for (int j = 0; j < boardsize; j++) {
+                cells[i][j]=false;
+                board[i][j] = 0;
+            }
+        }
+        setMines();
+        setNumbers();
+        invalidate();
+    }
 
 }

@@ -13,6 +13,7 @@
     android:weightSum="1">
 
     <com.example.forbess.gcd_minesweeper_sf.CustomView
+        android:id="@+id/customView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
@@ -20,6 +21,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/reset"
         android:text="@string/reset"
         android:background="#4c94e6"
         android:clickable="true"
