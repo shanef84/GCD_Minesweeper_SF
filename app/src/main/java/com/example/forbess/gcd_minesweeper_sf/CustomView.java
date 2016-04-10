@@ -21,9 +21,9 @@ public class CustomView extends View{
     //private fields for rendering the view
     private final int boardsize = 10;
     private int cellWidth, cellHeight;
-    private Paint grey, white, red, mineText, textOne, textTwo, TextThree;
+    private Paint grey, white, red, mineText, textOne, textTwo, textThree, textFour;
     private float textSize, textWidth;
-    private String mine;
+    private String mine, one, two, three, four;
     private boolean touch = false;
     //Grid
     private int[][] board;       //record value in cells 0 = no touch
@@ -77,19 +77,29 @@ public class CustomView extends View{
     // refactored init method as most of this code is shared by all the constructors
     private void init() {
         //set colors
-        white = new Paint(Paint.ANTI_ALIAS_FLAG);
-        white.setColor(Color.WHITE);white.setStrokeWidth(2);
+        white = new Paint(Paint.ANTI_ALIAS_FLAG); white.setColor(Color.WHITE);white.setStrokeWidth(2);
         grey = new Paint(Paint.ANTI_ALIAS_FLAG);grey.setColor(Color.GRAY);
         //mine text+size
-        mine = "M";
+        mine = "M";one="1";two="2";three="3";four="4";
         red = new Paint(Paint.ANTI_ALIAS_FLAG);red.setColor(Color.RED);
-        mineText = new Paint(Paint.ANTI_ALIAS_FLAG);mineText.setColor(Color.BLACK);
-        mineText.setTextSize(60);mineText.setTextAlign(Paint.Align.CENTER);
+        mineText = new Paint(Paint.ANTI_ALIAS_FLAG);textOne = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textTwo = new Paint(Paint.ANTI_ALIAS_FLAG);textThree = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textFour = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mineText.setColor(Color.BLACK);textOne.setColor(Color.BLUE);
+        textTwo.setColor(Color.GREEN);textThree.setColor(Color.YELLOW);textFour.setColor(Color.RED);
+        mineText.setTextSize(60);textOne.setTextSize(60);textTwo.setTextSize(60);textThree.setTextSize(60);textFour.setTextSize(60);
+        mineText.setTextAlign(Paint.Align.CENTER);textOne.setTextAlign(Paint.Align.CENTER);textTwo.setTextAlign(Paint.Align.CENTER);
         textWidth = mineText.measureText(mine); textSize = mineText.getTextSize();
 
 
         board = new int [boardsize][boardsize];
+        for (int i = 0; i < boardsize; i++) {
+            for (int j = 0; j < boardsize; j++) {
+                board[i][j] = 0;
+            }
+        }
         setMines();
+        setNumbers();
     }
 
     // public method that needs to be overridden to draw the contents of this widget
@@ -103,14 +113,22 @@ public class CustomView extends View{
                     if (board[i][j]==1) {
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
                         //print numbers 1
+                        canvas.drawText(one, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, textOne);
                     }
                     else if (board[i][j]==2){
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
                         //print numbers 2
+                        canvas.drawText(two, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, textTwo);
                     }
                     else if (board[i][j]==3){
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
                         //print numbers 3
+                        canvas.drawText(three, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, textThree);
+                    }
+                    else if (board[i][j]==4){
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
+                        //print numbers 4
+                        canvas.drawText(four, (i * cellWidth)+ textWidth, (j * cellHeight) + textSize, textFour);
                     }
                     else if (board[i][j]==5){
                         canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, red);
@@ -150,6 +168,64 @@ public class CustomView extends View{
             for ( int j = 0; j < boardsize; j++){
                 if (board[i][j]==5){
                     //render numbers
+                    if ((i>0 && i<9) && (j>0 && j<9)) {
+                        if (board[i - 1][j - 1] < 4) board[i - 1][j - 1] += 1;  //0,0
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i - 1][j + 1] < 4) board[i - 1][j + 1] += 1;  //0,2
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                        if (board[i + 1][j - 1] < 4) board[i + 1][j - 1] += 1;  //2,0
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                        if (board[i + 1][j + 1] < 4) board[i + 1][j + 1] += 1;  //2,2
+                    }
+                    if ((i==0) && (j>0 && j<9)){
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                        if (board[i + 1][j - 1] < 4) board[i + 1][j - 1] += 1;  //2,0
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                        if (board[i + 1][j + 1] < 4) board[i + 1][j + 1] += 1;  //2,2
+                    }
+                    if ((j==0) && (i>0 && i<9)){
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i - 1][j + 1] < 4) board[i - 1][j + 1] += 1;  //0,2
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                        if (board[i + 1][j + 1] < 4) board[i + 1][j + 1] += 1;  //2,2
+                    }
+                    if ((i==9) && (j>0 && j<9)){
+                        if (board[i - 1][j - 1] < 4) board[i - 1][j - 1] += 1;  //0,0
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i - 1][j + 1] < 4) board[i - 1][j + 1] += 1;  //0,2
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                    }
+                    if ((j==9) && (i>0 && i<9)){
+                        if (board[i - 1][j - 1] < 4) board[i - 1][j - 1] += 1;  //0,0
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                        if (board[i + 1][j - 1] < 4) board[i + 1][j - 1] += 1;  //2,0
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                    }
+                    if (i==0 && j==0){
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                        if (board[i + 1][j + 1] < 4) board[i + 1][j + 1] += 1;  //2,2
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                    }
+                    if (i==0 && j==9){
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                        if (board[i + 1][j - 1] < 4) board[i + 1][j - 1] += 1;  //2,0
+                        if (board[i + 1][j] < 4) board[i + 1][j] += 1;      //2,1
+                    }
+                    if (i==9 && j==0){
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i - 1][j + 1] < 4) board[i - 1][j + 1] += 1;  //0,2
+                        if (board[i][j + 1] < 4) board[i][j + 1] += 1;      //1,2
+                    }
+                    if (i==9 && j==9){
+                        if (board[i - 1][j - 1] < 4) board[i - 1][j - 1] += 1;  //0,0
+                        if (board[i - 1][j] < 4) board[i - 1][j] += 1;      //0,1
+                        if (board[i][j - 1] < 4) board[i][j - 1] += 1;      //1,0
+                    }
                 }
             }
         }
