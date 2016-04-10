@@ -16,35 +16,36 @@ import android.view.View;
 import android.widget.Toast;
 
 public class CustomView extends View{
-    //Constants
+    //private fields for rendering the view
     private final int boardsize = 10;
     private int cellWidth, cellHeight;
-    private Paint grey, white, red;
-
+    private Paint grey, white, red, yellow;
+    private boolean touch = false;
     //Grid
-    private int[][] grid;
-    private boolean[][] cells;
-    //Global flag for disabling the touch if mine is hit
-    private boolean touch;
+    private int[][] board;       //record value in cells 0 = no touch
+    private boolean[][] cells;  //record touches on cell
 
     //default constructor
     public CustomView(Context c){
         super(c);
         init();
     }
-
     //constructor that takes in a context + list of attributes set through XML
     public CustomView(Context c, AttributeSet as) {
         super(c, as);
         init();
     }
-
     public CustomView(Context c, AttributeSet as, int default_style) {
         super(c, as, default_style);
         init();
     }
-
-    //override the onMeasure() method to make CustomView a square
+    //override the onSizeChanged method
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        setSize();
+    }
+    //override the onMeasure() method
     @Override
     protected void onMeasure(int widthMeasure, int heightMeasure) {
         super.onMeasure(widthMeasure, heightMeasure);
@@ -62,25 +63,27 @@ public class CustomView extends View{
         setMeasuredDimension(size + getPaddingLeft() + getPaddingRight(), size + getPaddingTop() + getPaddingBottom());
     }
 
+    private void setSize(){
+        //set cell sizes
+        cellWidth = getWidth() / boardsize;
+        cellHeight = getHeight() / boardsize;
+        cells = new boolean[boardsize][boardsize];
+    }
+
     // refactored init method as most of this code is shared by all the constructors
     private void init() {
         //set colors
         white = new Paint(Paint.ANTI_ALIAS_FLAG);
         grey = new Paint(Paint.ANTI_ALIAS_FLAG);
         red = new Paint(Paint.ANTI_ALIAS_FLAG);
-        white.setColor(Color.WHITE);white.setStrokeWidth(5);
+        yellow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        white.setColor(Color.WHITE);white.setStrokeWidth(2);
         grey.setColor(Color.GRAY);
         red.setColor(Color.RED);
-        //set cell sizes
-        cellWidth = (int) getMeasuredWidth() / boardsize;
-        cellHeight = (int) getMeasuredHeight() / boardsize;
-        //grid
-        cells = new boolean[boardsize][boardsize];
-        for (int i=0; i<boardsize; i++){
-            for (int j=0; j<boardsize; j++){
-                cells[i][j]=false;
-            }
-        }
+        yellow.setColor(Color.YELLOW);
+        setSize();
+        board = new int [boardsize][boardsize];
+
     }
 
     // public method that needs to be overridden to draw the contents of this widget
@@ -88,20 +91,40 @@ public class CustomView extends View{
         // call the superclass method
         super.onDraw(canvas);
         canvas.drawColor(Color.BLACK);
+        for (int i = 0; i < boardsize; i++) {
+            for (int j = 0; j < boardsize; j++) {
+                if (cells[i][j]) {
+                    //do nothing
+                    if (board[i][j]==1) {
+                        //do something
+                    }
+                    else {
+                        canvas.drawRect(i * cellWidth, j * cellHeight, (i + 1) * cellWidth, (j + 1) * cellHeight, grey);
+                    }
+                }
+            }
+        }
+        //draw lines
         for (int i = 1; i < boardsize; i++) {
             canvas.drawLine(0, i*(getHeight()/boardsize), getWidth(), i*(getHeight()/boardsize), white);
-            canvas.drawLine(i*(getWidth()/boardsize), 0, i*(getWidth()/boardsize), getHeight(), white);
+            canvas.drawLine(i*(getWidth() / boardsize), 0, i*(getWidth()/boardsize), getHeight(), white);
         }
-        /*for (int i = 1; i < boardsize; i++) {
-            canvas.drawLine(0, i * cellHeight, getWidth(), i * cellHeight, white);
-        }*/
     }
 
     // public method that needs to be overridden to handle the touches from a user
     public boolean onTouchEvent(MotionEvent event) {
-        // if we get to this point they we have not handled the touch
-        // ask the system to handle it instead
-        return super.onTouchEvent(event);
-    }
+        //this indicates that the user has placed a finger on the screen
+        if (event.getAction() == MotionEvent.ACTION_DOWN && !touch) {
+            int x = (int)(event.getX() / cellWidth);
+            int y = (int)(event.getY() / cellHeight);
+            //If cell is touched, and not a mine there, make it not clickable (will not change color) for next time
+            if (!cells[x][y]){
+                cells[x][y] = true;
+            }
+            invalidate();
+
+        }
+        return true;
+        }
 
 }
